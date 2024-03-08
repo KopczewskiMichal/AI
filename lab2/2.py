@@ -21,19 +21,21 @@ print("Explained variance ratio:", pca_iris.explained_variance_ratio_)
 transformed_data = pca_iris.transform(iris.data)
 
 # Plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
 colors = ['r', 'g', 'b']
 markers = ['o', 's', 'D']
 
-fig, ax = plt.subplots()
-
 for i, flower_type in enumerate(iris.target_names):
-    ax.scatter(transformed_data[y == i, 0], transformed_data[y == i, 1],
+    ax.scatter(transformed_data[y == i, 0], transformed_data[y == i, 1], transformed_data[y == i, 2],
                c=colors[i],
                marker=markers[i],
                label=flower_type)
 
 ax.set_xlabel('PC1')
 ax.set_ylabel('PC2')
+ax.set_zlabel('PC3')
 ax.set_title('PCA of Iris Dataset')
 
 plt.legend()

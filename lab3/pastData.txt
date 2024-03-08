@@ -1,0 +1,18 @@
+if pl  < 0.8:
+      return setosa
+    elif sl > 6.3:
+      return virginica
+    else: 
+      return versicolor
+49%
+
+
+if pl  < 0.8:
+      return setosa
+    elif pl > 4.9:
+      return virginica
+    else: 
+      return versicolor
+69%
+
+
