@@ -13,8 +13,9 @@ def main():
 
   clf = tree.DecisionTreeClassifier()
   clf.fit(train_inputs, train_classes)
-  tree.plot_tree(clf)
+  # tree.plot_tree(clf)
 
+  save_tree_plot(clf)
   test_clf(clf, test_inputs, test_classes)
 
   
@@ -28,6 +29,12 @@ def test_clf(clf, test_inputs, test_classes):
   
   print("Correct predictions:    ", correct_predictions)
   print(correct_predictions / len(test_inputs) * 100, "%")
+
+def save_tree_plot(clf):
+  import graphviz 
+  dot_data = tree.export_graphviz(clf, out_file=None) 
+  graph = graphviz.Source(dot_data) 
+  graph.render("iris") 
 
 
 if __name__ == "__main__":
