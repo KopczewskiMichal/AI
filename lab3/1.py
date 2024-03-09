@@ -6,9 +6,9 @@ def main():
   (train_set, test_set) = train_test_split(df.values, train_size=0.7, random_state=876987)
 
   def classify_iris(sl, sw, pl, pw):
-    if pl  < 0.7:
+    if pw < 0.8:
       return "setosa"
-    elif pw > 1.8:
+    elif pl > 4.9:
       return "virginica"
     else: 
       return "versicolor"
@@ -20,49 +20,26 @@ def main():
   test_inputs = test_set[:, 0:4]
   test_classes = test_set[:, 4]
 
-  # helper(train_set)
+  helper(pd.DataFrame(train_set, columns=["sl", "sw", "pl", "pw", "species"]))
 
   good_predictions = 0
   for i in range(len):
     if classify_iris(test_inputs[i, 0], test_inputs[i, 1], test_inputs[i, 2], test_inputs[i, 3]) == test_classes[i]:
       good_predictions += 1
 
-  print(good_predictions)
+  print("Trafiono:   ",good_predictions)
   print(round(good_predictions/len*100), "%")
 
 
 def helper(data_set):
-  def count_stats(data_set):
-    # schemat: sl, sw, pl, pw, count
-    setosa_stats = [0,0,0,0,0]
-    versicolor_stats = [0,0,0,0,0]   
-    virginica_stats = [0,0,0,0,0]
-
-    for elem in data_set:
-      match elem[4]:
-        case "setosa":
-          for i in range(4):
-            setosa_stats[i] += elem[i]
-          setosa_stats[4] += 1
-        case "versicolor":
-          for i in range(4):
-            versicolor_stats[i] += elem[i]
-          versicolor_stats[4] += 1
-        case "virginica":
-          for i in range(4):
-            virginica_stats[i] += elem[i]
-          virginica_stats[4] += 1
+  def count_stats(data_set, species):
+    df = data_set.loc[data_set["species"] == species]
+    print(f"{round(df["sl"].median(), 1)} {round(df["sw"].median(), 1)} {round(df["pl"].median(), 1)} {round(df["pw"].median(), 1)} {species}")
     
-    for i in range(4):
-      setosa_stats[i] = round(setosa_stats[i] / setosa_stats[4],2)
-      versicolor_stats[i] = round(versicolor_stats[i] / versicolor_stats[4],2)
-      virginica_stats[i] = round(virginica_stats[i] / virginica_stats[4],2)
     
-    print("setosa:     ", setosa_stats)
-    print("versicolor: ", versicolor_stats)
-    print("virginica:  ", virginica_stats)
 
-  count_stats(data_set)
+  for elem in ["setosa", "versicolor", "virginica"]:
+    count_stats(data_set, elem)
 
     
 

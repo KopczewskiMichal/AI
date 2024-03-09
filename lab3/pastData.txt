@@ -16,3 +16,11 @@ if pl  < 0.8:
 69%
 
 
+ if pw < 0.8:
+      return "setosa"
+    elif pl > 4.9:
+      return "virginica"
+    else: 
+      return "versicolor"
+\100%
+
