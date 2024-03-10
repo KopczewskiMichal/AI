@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
 from sklearn import tree
 
 def main():
@@ -23,6 +24,7 @@ def main():
 def test_clf(clf, test_inputs, test_classes):
   correct_predictions = 0
   res = clf.predict(test_inputs)
+  print(confusion_matrix(test_classes, res))
   for i in range(len(res)):
     if res[i] == test_classes[i]:
       correct_predictions += 1
