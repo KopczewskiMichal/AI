@@ -160,3 +160,6 @@ cython_debug/
 #.idea/
 lab2/better_iris.csv
 lab3/iris.pdf
+.metals/metals.mv.db
+.vscode/settings.json
+.DS_Store/*

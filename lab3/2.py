@@ -14,7 +14,6 @@ def main():
 
   clf = tree.DecisionTreeClassifier()
   clf.fit(train_inputs, train_classes)
-  # tree.plot_tree(clf)
 
   save_tree_plot(clf)
   test_clf(clf, test_inputs, test_classes)

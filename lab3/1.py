@@ -13,8 +13,9 @@ def main():
     else: 
       return "versicolor"
     
-  len = test_set.shape[0]
+  simple_test(test_set)
 
+  len = test_set.shape[0]
   train_inputs = train_set[:, 0:4]
   train_classes = train_set[:, 4]
   test_inputs = test_set[:, 0:4]
@@ -41,8 +42,18 @@ def helper(data_set):
   for elem in ["setosa", "versicolor", "virginica"]:
     count_stats(data_set, elem)
 
-    
 
+def simple_test(test_set):
+  for elem in test_set:
+    if elem[3] >= 0.8 and elem[4] == "setosa":
+      print(elem, "Dziwny kwiatek 1")
+    elif elem[3] < 0.8 and elem[4] != "setosa":
+      print(elem, "Dziwny kwiatek 2")
+    elif elem[2] <= 4.9 and elem[4] == "virginica":
+      print(elem, "Dziwny kwiatek 3")
+    elif elem[2] > 4.9 and elem[4] == "versicolor":
+      print(elem, "Dziwny kwiatek 4")
+    
         
           
             

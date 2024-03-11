@@ -10,8 +10,6 @@ from sklearn.naive_bayes import GaussianNB
 def main():
   df = pd.read_csv('iris.csv')
 
-
-
   classify_clf(df)
   classify_knn(3, df)
   classify_knn(5, df)
