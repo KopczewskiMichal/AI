@@ -33,7 +33,7 @@ def test_clf(clf, test_inputs, test_classes):
 
 def save_tree_plot(clf):
   import graphviz 
-  dot_data = tree.export_graphviz(clf, out_file=None) 
+  dot_data = tree.export_graphviz(clf, out_file=None, filled=True) 
   graph = graphviz.Source(dot_data) 
   graph.render("iris") 
 

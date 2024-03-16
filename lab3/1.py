@@ -21,7 +21,7 @@ def main():
   test_inputs = test_set[:, 0:4]
   test_classes = test_set[:, 4]
 
-  helper(pd.DataFrame(train_set, columns=["sl", "sw", "pl", "pw", "species"]))
+  # helper(pd.DataFrame(train_set, columns=["sl", "sw", "pl", "pw", "species"]))
 
   good_predictions = 0
   for i in range(len):
