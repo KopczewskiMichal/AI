@@ -19,7 +19,7 @@ def network(data, *hidden_layers):
   train_inputs, train_classes, test_inputs, test_classes = split_data(data)
   mlp = MLPClassifier(
                     hidden_layer_sizes=(hidden_layers), 
-                    max_iter=3000)
+                    max_iter=4000)
   mlp.fit(train_inputs, train_classes)
 
   # precision_score(y_true, y_pred, zero_division=0)
@@ -31,8 +31,7 @@ def network(data, *hidden_layers):
 
 
 def split_data(df):
-  random_state = randint(0,1000)
-  (train_set, test_set) = train_test_split(df.values, train_size=0.7, random_state=random_state)
+  (train_set, test_set) = train_test_split(df.values, train_size=0.7, random_state=13)
   train_inputs = train_set[:, 0:4]
   train_classes = train_set[:, 4]
   test_inputs = test_set[:, 0:4]

@@ -163,3 +163,5 @@ lab3/iris.pdf
 .metals/metals.mv.db
 .vscode/settings.json
 .DS_Store/*
+.DS_Store
+dogsandcats/dogs-vs-cats/*
