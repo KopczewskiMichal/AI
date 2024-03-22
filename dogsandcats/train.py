@@ -54,6 +54,7 @@ def run_test_harness():
 	test_it = datagen.flow_from_directory('dogs-vs-cats/validation/',
 		class_mode='binary', batch_size=64, target_size=(200, 200))
 	# fit model
+	print("Zaraz rozpoczynamy trenowanie")
 	history = model.fit(train_it, steps_per_epoch=len(train_it),
 		validation_data=test_it, validation_steps=len(test_it), epochs=20, verbose=1)
 	# evaluate model
