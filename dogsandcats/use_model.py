@@ -11,7 +11,9 @@ from keras.layers import Dense
 from keras.layers import Flatten
 from keras.utils import img_to_array
 from keras.utils import load_img
+from tensorflow.keras.preprocessing import image
 import numpy as np
+import os
 
 
 
@@ -25,9 +27,10 @@ def main():
   # model.summary()
   # model = re_train(model)
   # model.summary()
-  predict_image(model, "./dogs-vs-cats/test1/2492.jpg")
-  predict_image(model, "./dogs-vs-cats/test1/2494.jpg")
-  predict_image(model, "./dogs-vs-cats/test1/2495.jpg")
+  # predict_image(model, "./dogs-vs-cats/test1/2492.jpg")
+  # predict_image(model, "./dogs-vs-cats/test1/2494.jpg")
+  # predict_image(model, "./dogs-vs-cats/test1/2495.jpg")
+  predict_images_dir(model, "dogs-vs-cats/test1/")
   # evaluate(model)
 
 
@@ -35,8 +38,39 @@ def predict_image(model, image_path:str):
   image = load_img(image_path, target_size=(200, 200))
   input_arr = img_to_array(image)
   input_arr = np.array([input_arr])  # Convert single image to a batch.
+  # input _arr /= 255.0
   predictions = model.predict(input_arr)
   print(predictions)   # 0 kot, 1 pies
+
+def predict_images_dir(model, images_dir):
+  def create_batch(images_path_arr):
+    result = np.zeros((len(images_path_arr), 200, 200, 3))
+    for index, image_path in enumerate(images_path_arr):
+      image = load_img(images_dir + image_path, target_size=(200, 200))
+      img_arr = img_to_array(image)
+      result[index] = img_arr
+    return result
+  
+  def predict_bath_results(batch):
+    def save_bath_result_to_file(filepath:str, data):
+      print(data)
+      file = open(filepath, "a")
+      file.write(str(data))
+      file.close()
+    predictions = model.predict(batch)
+    save_bath_result_to_file("predictions.txt", predictions)
+
+  batch_size = 64
+  images_paths = os.listdir(images_dir)
+
+  for i in range(0, len(images_paths), batch_size):
+    if i <= len(images_paths) - batch_size:
+      predict_bath_results(create_batch(images_paths[i:i+batch_size]))
+    else:
+      predict_bath_results(create_batch(images_paths[i:]))
+
+    # print(predictions)
+
 
 def evaluate(model):
   datagen = ImageDataGenerator(rescale=1.0/255.0)
