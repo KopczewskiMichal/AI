@@ -20,7 +20,7 @@ import os
 def main():
   from keras.models import load_model
 
-  model = load_model('trained_model.keras', compile=False)
+  model = load_model('best_model.keras', compile=False)
 
   model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
 
@@ -30,8 +30,8 @@ def main():
   # predict_image(model, "./dogs-vs-cats/test1/2492.jpg")
   # predict_image(model, "./dogs-vs-cats/test1/2494.jpg")
   # predict_image(model, "./dogs-vs-cats/test1/2495.jpg")
-  predict_images_dir(model, "dogs-vs-cats/test1/")
-  # evaluate(model)
+  # predict_images_dir(model, "dogs-vs-cats/test1/")
+  evaluate(model)
 
 
 def predict_image(model, image_path:str): 
