@@ -18,8 +18,8 @@ scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
 # Encode the labels
-encoder = OneHotEncoder(sparse=False)
-y_encoded = encoder.fit_transform(y.reshape(-1, 1))
+encoder = OneHotEncoder()
+y_encoded = encoder.fit_transform(y.reshape(-1, 1)).toarray()
 
 # Split the dataset into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_encoded, test_size=0.3, random_state=42)
