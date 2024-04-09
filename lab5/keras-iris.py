@@ -35,7 +35,7 @@ model = Sequential([
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Train the model
-history = model.fit(X_train, y_train, epochs=100, validation_split=0.2)
+history = model.fit(X_train, y_train, epochs=100, validation_split=0.2, verbose=1)
 
 # Evaluate the model on the test set
 test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=0)
@@ -62,10 +62,21 @@ plt.grid(True, linestyle='--', color='grey')
 plt.legend()
 
 plt.tight_layout()
-plt.show()
 
 # Save the model
 model.save('iris_model.h5')
+plt.show()
 
 # Plot and save the model architecture
 plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
+
+
+
+# ODPOWIEDZI  DO PYTAŃ
+# Standard Scaler skaluje zdjęcia tak aby były rozdzielczości  odpowiedniej do modelu
+# OneHotEncoder zamienia kolory na bardziej wyraźne dla AI
+# Warstwa wejściowa ma ilość neuronów taką jak obrazek piseli
+# tak, funkcja relu jest fajna
+# Zmiana partii może być wymagana jeśli brakuje np. ramu
+# Model zaczyna się przetrenowywać
+# 

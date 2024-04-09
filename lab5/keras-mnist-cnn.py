@@ -49,6 +49,7 @@ sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
 plt.xlabel('Predicted')
 plt.ylabel('True')
 plt.title('Confusion Matrix')
+plt.savefig('2.1.png')
 plt.show()
 
 # Plotting training and validation accuracy
@@ -71,6 +72,7 @@ plt.grid(True, linestyle='--', color='grey')
 plt.legend()
 
 plt.tight_layout()
+plt.savefig('2.2.png')
 plt.show()
 
 # Display 25 images from the test set with their predicted labels
@@ -82,4 +84,10 @@ for i in range(25):
     plt.grid(False)
     plt.imshow(test_images[i].reshape(28,28), cmap=plt.cm.binary)
     plt.xlabel(predicted_labels[i])
+plt.savefig('2.3.png')
 plt.show()
+
+
+# Preprocessing służy dostosowaniu obrazków do uczenia, np poprzez kompresje stratną,
+# Program często rozpoznaje 7 jako 2
+# podpunkt e mam w pliku z lepszymi psami i kotami
