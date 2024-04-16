@@ -28,6 +28,18 @@ def get_model():
   )
   return model
 
+def create_example_predictions_plot():
+  plt.figure(figsize=(10,10))
+  for i in range(25):
+      plt.subplot(5,5,i+1)
+      plt.xticks([])
+      plt.yticks([])
+      plt.grid(False)
+      plt.imshow(test_images[i].reshape(28,28), cmap=plt.cm.binary)
+      plt.xlabel(predicted_labels[i])
+  plt.savefig('plots/examplePredictions.png')
+  plt.show()
+
 def evaluate(model):
   datagen = ImageDataGenerator(rescale=1.0 / 255.0)
   test_it = datagen.flow_from_directory(
