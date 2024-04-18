@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 def main():
-  model = load_model('emotions-better.keras', compile=False)
+  model = load_model('emotions-better2.keras', compile=False)
   # model = load_model("ferplus_model_pd_best.h5")
   model.compile(loss='categorical_crossentropy', metrics=['accuracy'])
 

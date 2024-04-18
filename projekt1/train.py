@@ -19,7 +19,7 @@ def main():
   model = define_model()
 
   checkpoint = ModelCheckpoint("emotions-better2.keras", monitor='accuracy', verbose=1,
-    save_best_only=True, mode='auto')
+    save_best_only=True, mode='auto', save_freq='epoch')
   early_stop = EarlyStopping(monitor='accuracy', patience=6)
 
   history = model.fit(
