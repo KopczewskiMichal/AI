@@ -3,10 +3,11 @@ import cv2
 import numpy as np
 
 def main():
-  model = load_model('emotions.keras', compile=False)
+  model = load_model('emotions-better.keras', compile=False)
+  # model = load_model("ferplus_model_pd_best.h5")
   model.compile(loss='categorical_crossentropy', metrics=['accuracy'])
 
-  emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
+  emotion_dict = {0: 'angry', 1: 'contempt', 2:'disgust', 3:'fear', 4:'happy', 5:'neutral', 6:'sad', 7:'suprise'}
   face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
   cv2.ocl.setUseOpenCL(False)

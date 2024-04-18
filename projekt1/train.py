@@ -9,16 +9,16 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import tensorflow as tf #! wypadałoby zoptymalizować import
 
-target_size = (48, 48) # 48x48 to rozmiar obrazków w datasecie
+target_size = (48, 48) # 48x48 to rozmiar obrazków w orginalnym datasecie
 epochs = 60
 
 def main():
-  train_generator = define_data_generator('Dataset/train')
-  validation_generator = define_data_generator('Dataset/test')
+  train_generator = define_data_generator('betterDataset/train')
+  validation_generator = define_data_generator('betterDataset/test')
 
   model = define_model()
 
-  checkpoint = ModelCheckpoint("emotions.keras", monitor='accuracy', verbose=1,
+  checkpoint = ModelCheckpoint("emotions-better2.keras", monitor='accuracy', verbose=1,
     save_best_only=True, mode='auto')
   early_stop = EarlyStopping(monitor='accuracy', patience=6)
 
@@ -38,7 +38,7 @@ def define_data_generator(source_dir: str):
   generator = datagen.flow_from_directory(
           source_dir,
           target_size=target_size,
-          batch_size=64,
+          batch_size=32,
           color_mode="grayscale",
           class_mode='categorical')
   return generator
@@ -61,7 +61,7 @@ def define_model():
   model.add(Flatten())
   model.add(Dense(1024, activation='relu'))
   model.add(Dropout(0.5))
-  model.add(Dense(7, activation='softmax'))
+  model.add(Dense(8, activation='softmax'))
 
   learning_rate_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
     initial_learning_rate=0.0001,

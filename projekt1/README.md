@@ -6,3 +6,4 @@
 - opencv
 
 ### zbiór treningowy: https://www.kaggle.com/datasets/msambare/fer2013
+### 2gi zbiór treningowy https://www.kaggle.com/datasets/arnabkumarroy02/ferplus/data
