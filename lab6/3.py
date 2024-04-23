@@ -1,5 +1,52 @@
-def main():
+# import cv2 
+
+
+import numpy as np 
+
+
+import matplotlib.pyplot as plt 
+
+
   
 
-if __name__ == '__main__':
-  main()
+
+image = cv2.imread('./bird_miniatures/E0089_TR0005_OB2257_T01_M13.jpg') 
+
+
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) 
+
+
+  
+
+
+blur = cv2.GaussianBlur(gray, (11, 11), 0) 
+
+
+canny = cv2.Canny(blur, 30, 150, 3) 
+
+
+dilated = cv2.dilate(canny, (1, 1), iterations=0) 
+
+
+  
+
+
+(cnt, hierarchy) = cv2.findContours( 
+
+
+    dilated.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE) 
+
+
+rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) 
+
+
+cv2.drawContours(rgb, cnt, -1, (0, 255, 0), 2) 
+
+
+  
+
+
+  
+
+
+print("coins in the image : ", len(cnt)) 
