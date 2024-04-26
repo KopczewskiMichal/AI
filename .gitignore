@@ -3,3 +3,5 @@ lab5/dogs-cats-mini/*
 *.DS_Store
 *.keras
 bookPhotos/
+__pycache__*
+yolov8n.pt
