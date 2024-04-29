@@ -1,11 +1,12 @@
 from collections import Counter;
+import time
 class History:
   MAX_LENGTH = 10
+  TIME_BEETWEN_REACTIONS = 5
   def __init__(self):
-    # TODO: zapis czasu wyświetlania ostatniej emocji aby nie strzelać reakcji seriami
+    self.last_reaction = time.time()
     self.history_arr = [] # przechowujemy historię jako listę int
     self.emotion_dict = {0: 'angry', 1: 'contempt', 2:'disgust', 3:'fear', 4:'happy', 5:'neutral', 6:'sad', 7:'suprise'}
-    # TODO: przepisaćc słownik emocji na enum
 
   def _insert_prediction(self, prediction: int):
     if len(self.history_arr) >= self.MAX_LENGTH:
@@ -23,7 +24,10 @@ class History:
 
   def handle_emotion(self, emotion_index):
     self._insert_prediction(emotion_index)
-    if len(self.history_arr) == self.MAX_LENGTH:
+    act_time = time.time()
+    if len(self.history_arr) == self.MAX_LENGTH \
+      and act_time - self.TIME_BEETWEN_REACTIONS > self.last_reaction:
+      self.last_reaction = act_time
       self._predict_longer_emotion(self._print_emotion)
     else:
       print("I did nothing")
