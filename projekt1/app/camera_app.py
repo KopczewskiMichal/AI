@@ -1,7 +1,6 @@
 from keras.models import load_model
 import cv2
 import numpy as np
-
 from history import History;
 
 def main():
@@ -30,7 +29,6 @@ def main():
         emotion_prediction = model.predict(cropped_img, verbose=0)
         maxindex = int(np.argmax(emotion_prediction))
         propability = round(emotion_prediction[0][maxindex], 2)
-        print(emotion_dict[maxindex], propability, num_faces.size)
         cv2.putText(frame, f"{emotion_dict[maxindex]} {propability * 100}%", (x+20, y-60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
         if num_faces.size == 4:
