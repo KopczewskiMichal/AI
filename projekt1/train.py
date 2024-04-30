@@ -13,7 +13,7 @@ target_size = (48, 48) # 48x48 to rozmiar obrazków w orginalnym datasecie
 epochs = 60
 
 def main():
-  train_generator = define_data_generator('betterDataset/train')
+  train_generator = define_data_generator('Dataset/train')
   validation_generator = define_data_generator('betterDataset/test')
 
   model = define_model()

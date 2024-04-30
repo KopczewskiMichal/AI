@@ -6,7 +6,6 @@ import threading
 import requests
 import json
 
-# TODO przy starcie program powinien sam ustawiać głośność komputera
 class History:
   MAX_LENGTH = 10
   TIME_BEETWEN_REACTIONS = 5
@@ -43,12 +42,29 @@ class History:
 
   
   def audio_reaction(self, emotion):
-    mytext = f'Siemasz. Kocham programować!'
+    match emotion: 
+      case "angry":
+        mytext = "Keep calm and code on with Python"
+      case "contempt":
+          mytext = "Oops, my bad! I'll just go hide in the corner."
+      case "disgust":
+          mytext =  "Ew, gross! Let's change the topic."
+      case "fear":
+          mytext = "Don't worry, I've got a blanket and some hot cocoa to keep you safe!"
+      case "happy":
+          mytext = "Yay, you're as happy as a unicorn in a candy store!"
+      case "neutral":
+          mytext = "Hey, life's like a cup of coffee - it's what you make of it!"
+      case "sad":
+          mytext = self.get_joke()
+      case "suprise":
+          mytext = "Well, that came out of left field! Let's roll with it!"
+
     t = threading.Thread(target=self._read_text, args=(mytext,))
     t.start()
     
   def _read_text(self, text: str):
-    language = 'pl'
+    language = 'en'
     myobj = gTTS(text=text, lang=language, slow=False)
     myobj.save("./main.mp3")
     os.system("afplay main.mp3")
@@ -68,7 +84,6 @@ class History:
 
 if __name__ == '__main__':
   myHistory = History()
-  # myHistory.audio_reaction("natural")
   start = time.time()
   print(myHistory.get_joke())
 
