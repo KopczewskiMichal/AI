@@ -3,7 +3,10 @@ import time
 from gtts import gTTS
 import os
 import threading
+import requests
+import json
 
+# TODO przy starcie program powinien sam ustawiać głośność komputera
 class History:
   MAX_LENGTH = 10
   TIME_BEETWEN_REACTIONS = 5
@@ -50,7 +53,23 @@ class History:
     myobj.save("./main.mp3")
     os.system("afplay main.mp3")
 
+  def get_joke(self) -> str:
+    try:
+      response = requests.get('https://v2.jokeapi.dev/joke/Programming?blacklistFlags=religious,political,racist,sexist&type=single')
+      if response.status_code == 200:
+        joke = json.loads(response.content)['joke']
+        return joke
+      else:
+        return f"Wystąpił problem podczas wysyłania zapytania. Kod odpowiedzi: {response.status_code}"
+    except Exception as e:
+      return "Wystąpił błąd podczas pobierania żartu"
+
+
 
 if __name__ == '__main__':
   myHistory = History()
-  myHistory.audio_reaction("natural")
+  # myHistory.audio_reaction("natural")
+  start = time.time()
+  print(myHistory.get_joke())
+
+  print(f"Executed in {start - time.time()}s")
