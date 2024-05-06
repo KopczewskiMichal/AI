@@ -2,6 +2,7 @@ from keras.models import load_model
 import cv2
 import numpy as np
 from history import History;
+import os
 
 def main():
   model = load_model('models/emotions-better2.keras', compile=False)
@@ -43,6 +44,7 @@ def main():
 
   cap.release()
   cv2.destroyAllWindows()
+  os.system("rm main.mp3")
 
 
 if __name__ == '__main__':

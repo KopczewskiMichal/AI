@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 from keras.models import load_model
 from train import define_data_generator
 import numpy as np
@@ -5,10 +7,10 @@ from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 
 def main():
-  model = load_model('emotions.keras', compile=False)
+  model = load_model('../emotions.keras', compile=False)
   model.compile(loss='categorical_crossentropy', metrics=['accuracy'])
 
-  data_generator = define_data_generator("Dataset/test")
+  data_generator = define_data_generator("../Dataset/test")
 
   compute_confusion_matrix(model, data_generator)
 
@@ -29,7 +31,7 @@ def compute_confusion_matrix(model, generator):
   plt.xticks(np.arange(len(generator.class_indices)), generator.class_indices.keys(), rotation=45)
   plt.yticks(np.arange(len(generator.class_indices)), generator.class_indices.keys())
   plt.tight_layout()
-  plt.savefig("plots/confusion_matrix.png")
+  plt.savefig("confusion_matrix.png")
   plt.show()
 
 
