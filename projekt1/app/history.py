@@ -8,7 +8,7 @@ import json
 
 class History:
   MAX_LENGTH = 10
-  TIME_BEETWEN_REACTIONS = 5
+  TIME_BEETWEN_REACTIONS = 10
   def __init__(self):
     self.last_reaction = time.time()
     self.history_arr = [] # przechowujemy historię jako listę int

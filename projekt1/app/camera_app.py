@@ -5,8 +5,9 @@ from history import History;
 import os
 
 def main():
-  model = load_model('models/emotions-better2.keras', compile=False)
+  model = load_model('../models/emotions.keras', compile=False)
   model.compile(loss='categorical_crossentropy', metrics=['accuracy'])
+  model.summary()
   emotions_history = History()
 
   emotion_dict = {0: 'angry', 1: 'contempt', 2:'disgust', 3:'fear', 4:'happy', 5:'neutral', 6:'sad', 7:'suprise'}
