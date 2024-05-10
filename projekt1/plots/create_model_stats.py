@@ -7,11 +7,12 @@ from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 
 def main():
-  model = load_model('../emotions.keras', compile=False)
+  model = load_model('../models/emotions.keras', compile=False)
   model.compile(loss='categorical_crossentropy', metrics=['accuracy'])
 
-  data_generator = define_data_generator("../Dataset/test")
+  data_generator = define_data_generator("../Dataset/validation")
 
+  model.evaluate(data_generator, verbose=1)
   compute_confusion_matrix(model, data_generator)
 
 

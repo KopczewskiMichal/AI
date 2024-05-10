@@ -7,7 +7,7 @@ from keras.optimizers import schedules
 from keras.layers import MaxPooling2D
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-import tensorflow as tf #! wypadałoby zoptymalizować import
+import tensorflow as tf 
 
 target_size = (48, 48) # 48x48 to rozmiar obrazków w orginalnym datasecie
 epochs = 60

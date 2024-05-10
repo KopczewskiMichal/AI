@@ -8,6 +8,17 @@
 ### Począkowy treningowy: https://www.kaggle.com/datasets/msambare/fer2013
 ### Ulepszony zbiór treningowy https://www.kaggle.com/datasets/arnabkumarroy02/ferplus/data
 
+## Dataset
+
+This dataset is the FERPlus dataset. It contains the images of 8 different emotions. These emotions include: Angry, Contempt, Disgust, Fear, Happy, Neutral, Sad and Surprise.
+
+It is divided across different folders:
+
+Train: 66,379 samples.
+Test: 3,579 samples and
+Validation: 8,341 samples.
+Moreover, the dataset is balanced now. Different augmentation techniques were used to balance out the data.
+
 ## Informacje o modelu
 | Layer (type)          | Output Shape     | Param #    |
 |-----------------------|------------------|------------|
