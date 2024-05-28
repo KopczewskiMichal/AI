@@ -24,3 +24,6 @@ if __name__ == "__main__":
   hotels()
   
 # TripAdvisor w podejrzany sposób zarządza opiniami, hotele mające ponad 6 tysięcy opinii często mają ok. 4 negatywnych. Odpowiednio mocno złą opinię uzyskałem za pomocą chat GPT 3.
+
+
+# pip install emoji==1.7

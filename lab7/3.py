@@ -7,12 +7,13 @@ client = Client('en-US')
 with open("login.json", 'r') as file:
   user_info = json.load(file)
 
-client.login(auth_info_1=user_info["username"], password=user_info["password"])
-client.save_cookies('cookies.json')
+# client.login(auth_info_1=user_info["username"], password=user_info["password"])
+# client.save_cookies('cookies.json')
 client.load_cookies(path='cookies.json')
 
-user = client.get_user_by_screen_name("realDonaldTrump")
-tweets = user.get_tweets('Tweets', count=100)
+# user = client.get_user_by_screen_name("realDonaldTrump")
+user = client.get_user_by_screen_name("HarvardBiz")
+tweets = user.get_tweets('Tweets', count=20)
 
 tweets_to_store = []
 for tweet in tweets:
@@ -23,7 +24,7 @@ for tweet in tweets:
     })
 
 df = pd.DataFrame(tweets_to_store)
-df.to_csv('tweets.csv', index=False)
+df.to_csv('tweets1.csv', index=False)
 print(df.sort_values(by='favorite_count', ascending=False))
 
 print(json.dumps(tweets_to_store, indent=4))
