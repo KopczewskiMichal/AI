@@ -1,0 +1,16 @@
+2024-05-28 12:57:25,604 - pyswarms.single.global_best - INFO - Optimize for 50 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.5}
+2024-05-28 12:57:26,239 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 9.285420174220502e-16, best pos: [-2.67578287e-08 -1.45794589e-08]
+2024-05-28 12:57:30,564 - matplotlib.animation - WARNING - MovieWriter imagemagick unavailable; using Pillow instead.
+2024-05-28 12:57:30,565 - matplotlib.animation - INFO - Animation.save using <class 'matplotlib.animation.PillowWriter'>
+2024-05-28 12:58:05,785 - pyswarms.single.global_best - INFO - Optimize for 50 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.5}
+2024-05-28 12:58:05,833 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 0.010508830062616145, best pos: [0.03939466 0.09464085]
+2024-05-28 12:58:10,190 - matplotlib.animation - WARNING - MovieWriter imagemagick unavailable; using Pillow instead.
+2024-05-28 12:58:10,190 - matplotlib.animation - INFO - Animation.save using <class 'matplotlib.animation.PillowWriter'>
+2024-05-28 12:59:13,055 - pyswarms.single.global_best - INFO - Optimize for 200 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
+2024-05-28 12:59:13,173 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 4.144228215754361e-13, best pos: [-6.26874675e-07  1.46461475e-07]
+2024-05-28 14:32:08,921 - pyswarms.single.global_best - INFO - Optimize for 200 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
+2024-05-28 14:32:09,728 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 8.156470313392577e-11, best pos: [ 1.48930226e-06 -8.90767545e-06]
+2024-05-28 14:37:23,702 - pyswarms.single.global_best - INFO - Optimize for 200 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
+2024-05-28 14:37:23,944 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 9.005442437562965e-12, best pos: [9.91649980e-07 2.83232639e-06]
+2024-05-28 14:37:54,968 - pyswarms.single.global_best - INFO - Optimize for 500 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
+2024-05-28 14:37:55,176 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 8.966028178928308e-26, best pos: [-1.24127752e-13 -2.72493271e-13]
