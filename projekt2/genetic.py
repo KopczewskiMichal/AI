@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib as mpl
+import matplotlib.pyplot as plt
 import pygad
 import numpy as np
 import itertools
@@ -9,11 +10,11 @@ import random
 mpl.rcParams['figure.facecolor'] = 'white'
 mpl.rcParams["figure.figsize"] = (10, 7)
 
-data = pd.read_csv("data.csv")
+data = pd.read_csv("resources/new_data.csv")
 df = data.copy()
-start_date = "2021-04-01"
-end_date = "2022-03-01"
-df = df[(df["date"] >= start_date) & (df["date"] <= end_date)]
+# start_date = "2021-04-01"
+# end_date = "2022-03-01"
+# df = df[(df["date"] >= start_date) & (df["date"] <= end_date)]
 df = df[["ticker", "date", "Close"]].rename(columns={"Close": "price"}).reset_index(drop=True)
 tickers = df["ticker"].unique()
 tickers_map = {i: j for i, j in zip(tickers, range(len(tickers)))}
@@ -42,18 +43,16 @@ def portfolio_return(portfolio):
     last_price = portfolio["adj_price"].iloc[-1]
     return last_price / first_price - 1
 
-def portfolio_risk(portfolio):
+def portfolio_risk(portfolio): # * odchylenie standardowe dziennych zmian
     portfolio["daily_change"] = portfolio["adj_price"].diff(1)
     portfolio["daily_change"] = portfolio["daily_change"] / portfolio["adj_price"]
-
     return portfolio["daily_change"].std()
 
-# Updated fitness function with three parameters
 def fitness_func(ga_instance, solution, solution_idx):
     portfolio = portfolio_generate(df, solution)
     ret = portfolio_return(portfolio)
     ris = portfolio_risk(portfolio)
-    fitness = ret / ris
+    fitness = ret / ris 
     return fitness
 
 def visualize(df, solution):
@@ -73,14 +72,13 @@ def visualize(df, solution):
 ## Define Genetic Algorithm
 
 fitness_function = fitness_func
-
 num_generations = 30
 num_genes = 10
 
 sol_per_pop = 90
 num_parents_mating = 50
 
-init_range_low = 0
+init_range_low = 100
 init_range_high = 497
 gene_type = int
 
@@ -91,6 +89,7 @@ crossover_type = "single_point"
 
 mutation_type = "random"
 mutation_percent_genes = 30
+mutation_by_replacement = True
 
 ## Initiate and run genetic algorithm
 
@@ -107,15 +106,15 @@ ga_instance = pygad.GA(num_generations=num_generations,
                        mutation_type=mutation_type,
                        mutation_percent_genes=mutation_percent_genes,
                        gene_type=gene_type,
-                       allow_duplicate_genes=False,
-                       random_seed=2)
+                    #    allow_duplicate_genes=False,
+                       random_seed=2,
+                       mutation_by_replacement=mutation_by_replacement)
 ga_instance.run()
 for i, j in zip(ga_instance.best_solutions, ga_instance.best_solutions_fitness):
     print([(tickers_map_reverse[k], k) for k in sorted(i)], j)
 
 ## Plot training, best results
-
-ga_instance.plot_fitness(save_dir="result.png")
+ga_instance.plot_fitness(save_dir="docs/learning_result.png")
 [solution, _, __] = ga_instance.best_solution()
 visualize(df, solution)
 
