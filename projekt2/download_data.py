@@ -12,7 +12,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 import yfinance as yf
 
 END_DATE = datetime.today()
-START_DATE = END_DATE - timedelta(days=365)
+START_DATE = END_DATE - timedelta(days=60)
 
 def get_sp500_companies() -> list[str]:
     url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
@@ -35,10 +35,11 @@ def download_tickers_history(tickers: list[str]) -> None:
 
 def download_SP500():
   raw_data = yf.download (tickers = "^GSPC", start = START_DATE,
-                              end = END_DATE, interval = "1d")
-  raw_data.to_csv("resources/SP500index_history.csv")
+                              end = END_DATE, interval = "5m")
+  raw_data.to_csv("resources/SP500_history.csv")
   
   
 if __name__ == "__main__":
-  download_tickers_history(get_sp500_companies())
+  # download_tickers_history(get_sp500_companies())
+  # download_SP500()
   
