@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas
@@ -27,11 +29,8 @@ def predictLSTM(df: pandas.DataFrame) -> dict:
         newPredict = scaler.inverse_transform(newPredict)
         tomorrow_prediction = newPredict[0][0]
         result[act_ticker] = tomorrow_prediction / close_values[-1]
-        # Print the prediction for the next day
-        # print(f"Predicted {act_ticker} close price for the next day:", tomorrow_prediction)
 
     return result
-
 
 def create_dataset(dataset, time_step=1):
     dataX, dataY = [], []

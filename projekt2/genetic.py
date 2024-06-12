@@ -6,12 +6,14 @@ import pygad
 import numpy as np
 import itertools
 import random
+from preprocessing import predictLSTM
 
 mpl.rcParams['figure.facecolor'] = 'white'
 mpl.rcParams["figure.figsize"] = (10, 7)
 
 data = pd.read_csv("resources/new_data.csv")
 df = data.copy()
+tomorrow_returns = predictLSTM(df)
 # start_date = "2021-04-01"
 # end_date = "2022-03-01"
 # df = df[(df["date"] >= start_date) & (df["date"] <= end_date)]
@@ -30,6 +32,7 @@ df = df[df["ticker"] != "OGN"]
 
 df.groupby("ticker").count().sort_values("date")
 
+
 ## Define fitness function and utils
 
 def get_portfolio_tickers(df, tickers):
@@ -37,33 +40,46 @@ def get_portfolio_tickers(df, tickers):
     unique_tickers = portfolio['ticker'].unique()
     return unique_tickers
 
+
+def portfolio_LSTM_return(portfolio_tickers) -> float:
+    sum_returns = 0.0
+    for ticker in portfolio_tickers:
+        sum_returns += tomorrow_returns[ticker]
+    return sum_returns / len(portfolio_tickers)
+
+
 def portfolio_generate(df, tickers):
     portfolio = df[df['ticker_index'].isin(tickers)]
     portfolio = portfolio.groupby("date", as_index=False).sum()
     portfolio = portfolio.sort_values("date")
-    print("Tickers in the portfolio:", get_portfolio_tickers(df, tickers))  # Wyświetlanie tickerów
-    return portfolio
+    # print("Tickers in the portfolio:", get_portfolio_tickers(df, tickers))  # Wyświetlanie tickerów
+    return portfolio, get_portfolio_tickers(df, tickers)
+
 
 def portfolio_history_return(portfolio):
     first_price = portfolio["adj_price"].iloc[0]
     last_price = portfolio["adj_price"].iloc[-1]
     return last_price / first_price - 1
 
-def portfolio_risk(portfolio): # * odchylenie standardowe dziennych zmian
+
+def portfolio_risk(portfolio):  # * odchylenie standardowe dziennych zmian
     portfolio["daily_change"] = portfolio["adj_price"].diff(1)
     portfolio["daily_change"] = portfolio["daily_change"] / portfolio["adj_price"]
     return portfolio["daily_change"].std()
 
+
 def fitness_func(ga_instance, solution, solution_idx):
-    portfolio = portfolio_generate(df, solution)
+    portfolio, portfolio_tickers = portfolio_generate(df, solution)
     ret = portfolio_history_return(portfolio)
     ris = portfolio_risk(portfolio)
-    fitness = ret / ris 
+    expected_return = portfolio_LSTM_return(portfolio_tickers) * 1000 - 1000
+    fitness = (ret / ris) + expected_return
     return fitness
 
-def visualize(df, solution):
+
+def visualize(df, solution) -> None:
     solution_fitness = fitness_func(None, solution, None)
-    portfolio = portfolio_generate(df, solution)
+    portfolio, _ = portfolio_generate(df, solution)
     portfolio["adj_price"] = (portfolio["adj_price"] / portfolio["adj_price"].iloc[0]) * 100
     ax = portfolio.plot.line(x="date", y="adj_price")
     ax.set_ylim(90, 190)
@@ -73,12 +89,14 @@ def visualize(df, solution):
     print(f"Parameters of the best solution : {[tickers_map_reverse[i] for i in solution]}")
     print(f"Return: {ret}%")
     print(f"Risk: {ris}%")
-    print(f"Risk adjusted return = {round(solution_fitness, 1)}%")
+    solution_fitness_scalar = solution_fitness.item()
+    print(f"Risk adjusted return = {round(solution_fitness_scalar, 1)}%")
+
 
 ## Define Genetic Algorithm
 
 fitness_function = fitness_func
-num_generations = 30
+num_generations = 60
 num_genes = 10
 
 sol_per_pop = 90
@@ -95,7 +113,7 @@ crossover_type = "single_point"
 
 mutation_type = "random"
 mutation_percent_genes = 30
-mutation_by_replacement = True
+mutation_by_replacement = False
 
 ## Initiate and run genetic algorithm
 
@@ -112,7 +130,7 @@ ga_instance = pygad.GA(num_generations=num_generations,
                        mutation_type=mutation_type,
                        mutation_percent_genes=mutation_percent_genes,
                        gene_type=gene_type,
-                    #    allow_duplicate_genes=False,
+                       #    allow_duplicate_genes=False,
                        random_seed=2,
                        mutation_by_replacement=mutation_by_replacement)
 ga_instance.run()
@@ -124,8 +142,7 @@ ga_instance.plot_fitness(save_dir="docs/learning_result.png")
 [solution, _, __] = ga_instance.best_solution()
 visualize(df, solution)
 
-## Top 10 performers benchmark
-
+# 10 spółek o największym zysku, nie uwzględniając ryzyka
 firsts = df.groupby("ticker_index", as_index=False).first()
 firsts = firsts.rename({"adj_price": "first_price"}, axis=1)[["ticker_index", "first_price"]]
 lasts = df.groupby("ticker_index", as_index=False).last()
