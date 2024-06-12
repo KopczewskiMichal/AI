@@ -32,13 +32,19 @@ df.groupby("ticker").count().sort_values("date")
 
 ## Define fitness function and utils
 
+def get_portfolio_tickers(df, tickers):
+    portfolio = df[df['ticker_index'].isin(tickers)]
+    unique_tickers = portfolio['ticker'].unique()
+    return unique_tickers
+
 def portfolio_generate(df, tickers):
     portfolio = df[df['ticker_index'].isin(tickers)]
     portfolio = portfolio.groupby("date", as_index=False).sum()
     portfolio = portfolio.sort_values("date")
+    print("Tickers in the portfolio:", get_portfolio_tickers(df, tickers))  # Wyświetlanie tickerów
     return portfolio
 
-def portfolio_return(portfolio):
+def portfolio_history_return(portfolio):
     first_price = portfolio["adj_price"].iloc[0]
     last_price = portfolio["adj_price"].iloc[-1]
     return last_price / first_price - 1
@@ -50,7 +56,7 @@ def portfolio_risk(portfolio): # * odchylenie standardowe dziennych zmian
 
 def fitness_func(ga_instance, solution, solution_idx):
     portfolio = portfolio_generate(df, solution)
-    ret = portfolio_return(portfolio)
+    ret = portfolio_history_return(portfolio)
     ris = portfolio_risk(portfolio)
     fitness = ret / ris 
     return fitness
@@ -61,7 +67,7 @@ def visualize(df, solution):
     portfolio["adj_price"] = (portfolio["adj_price"] / portfolio["adj_price"].iloc[0]) * 100
     ax = portfolio.plot.line(x="date", y="adj_price")
     ax.set_ylim(90, 190)
-    ret = round(portfolio_return(portfolio) * 100, 1)
+    ret = round(portfolio_history_return(portfolio) * 100, 1)
     ris = round(portfolio_risk(portfolio) * 100, 1)
 
     print(f"Parameters of the best solution : {[tickers_map_reverse[i] for i in solution]}")
