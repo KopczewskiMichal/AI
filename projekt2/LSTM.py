@@ -10,6 +10,8 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 from tensorflow.keras.callbacks import EarlyStopping
 
+LOOK_BACK = 3
+
 # convert an array of values into a dataset matrix
 def create_dataset(dataset, time_step=1):
     dataX, dataY = [], []
@@ -49,9 +51,8 @@ train_dates, test_dates = dates_scaled[0:train_size], dates_scaled[train_size:le
 train_close, test_close = close_values_scaled[0:train_size], close_values_scaled[train_size:len(close_values_scaled)]
 
 # Reshape into X=t and Y=t+1
-look_back = 1
-trainX, trainY = create_dataset(train_close, look_back)
-testX, testY = create_dataset(test_close, look_back)
+trainX, trainY = create_dataset(train_close, LOOK_BACK)
+testX, testY = create_dataset(test_close, LOOK_BACK)
 
 # Reshape input to be [samples, time steps, features]
 trainX = np.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
@@ -62,13 +63,13 @@ earlyStopCallback = EarlyStopping(monitor='loss', patience=3)
 
 # Create and fit the LSTM network
 model = Sequential()
-model.add(LSTM(50, return_sequences=True, input_shape=(trainX.shape[1], 1)))
+model.add(LSTM(50, return_sequences=True, input_shape=(trainX.shape[1], LOOK_BACK)))
 model.add(LSTM(50, return_sequences=True))
 model.add(LSTM(50))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer='adam')
-model.fit(trainX, trainY, epochs=30, batch_size=1, verbose=1, callbacks=[earlyStopCallback])
-model.save("LSTMmodel.keras")
+model.fit(trainX, trainY, epochs=50, batch_size=1, verbose=1, callbacks=[earlyStopCallback])
+model.save("LSTMmodel3.keras")
 
 # Make predictions
 trainPredict = model.predict(trainX)
@@ -89,16 +90,16 @@ print('Test Score: %.2f RMSE' % (testScore))
 # Shift train predictions for plotting
 trainPredictPlot = np.empty_like(close_values_scaled)
 trainPredictPlot[:, :] = np.nan
-trainPredictPlot[look_back:len(trainPredict) + look_back, :] = trainPredict
+trainPredictPlot[LOOK_BACK:len(trainPredict) + LOOK_BACK, :] = trainPredict
 
 # Shift test predictions for plotting
 testPredictPlot = np.empty_like(close_values_scaled)
 testPredictPlot[:, :] = np.nan
-testPredictPlot[len(trainPredict) + (look_back * 2) + 1:len(close_values_scaled) - 1, :] = testPredict
+testPredictPlot[len(trainPredict) + (LOOK_BACK * 2) + 1:len(close_values_scaled) - 1, :] = testPredict
 
 # Plot baseline and predictions
 plt.plot(scaler.inverse_transform(close_values_scaled), label='Original Data')
 plt.plot(trainPredictPlot, label='Train Predict')
 plt.plot(testPredictPlot, label='Test Predict')
 plt.legend()
-plt.savefig("docs/lstm_plot.png")
+plt.savefig("docs/lstm_plot3.png")
