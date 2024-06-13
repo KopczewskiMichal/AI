@@ -1,11 +1,7 @@
 import pandas as pd
-import numpy as np
 import matplotlib as mpl
-import matplotlib.pyplot as plt
 import pygad
-import numpy as np
-import itertools
-import random
+from datetime import datetime, timedelta
 from preprocessing import predictLSTM
 
 mpl.rcParams['figure.facecolor'] = 'white'
@@ -14,8 +10,10 @@ mpl.rcParams["figure.figsize"] = (10, 7)
 data = pd.read_csv("resources/new_data.csv")
 df = data.copy()
 tomorrow_returns = predictLSTM(df)
-# start_date = "2021-04-01"
-# end_date = "2022-03-01"
+
+print(tomorrow_returns)
+start_date = datetime.today() - timedelta(days=1)
+end_date = start_date - timedelta(days=30)
 # df = df[(df["date"] >= start_date) & (df["date"] <= end_date)]
 df = df[["ticker", "date", "Close"]].rename(columns={"Close": "price"}).reset_index(drop=True)
 tickers = df["ticker"].unique()
@@ -72,8 +70,9 @@ def fitness_func(ga_instance, solution, solution_idx):
     portfolio, portfolio_tickers = portfolio_generate(df, solution)
     ret = portfolio_history_return(portfolio)
     ris = portfolio_risk(portfolio)
-    expected_return = portfolio_LSTM_return(portfolio_tickers) * 1000 - 1000
-    fitness = (ret / ris) + expected_return
+    expected_return_points = (portfolio_LSTM_return(portfolio_tickers) - 1) * 2000
+    fitness = (ret / ris) - expected_return_points
+    # fitness = ret / ris
     return fitness
 
 
@@ -96,7 +95,7 @@ def visualize(df, solution) -> None:
 ## Define Genetic Algorithm
 
 fitness_function = fitness_func
-num_generations = 60
+num_generations = 30
 num_genes = 10
 
 sol_per_pop = 90
