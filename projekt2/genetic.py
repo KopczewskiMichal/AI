@@ -12,7 +12,7 @@ df = data.copy()
 tomorrow_returns = predictLSTM(df)
 
 print(tomorrow_returns)
-start_date = datetime.today() - timedelta(days=1)
+start_date = datetime.today()
 end_date = start_date - timedelta(days=30)
 # df = df[(df["date"] >= start_date) & (df["date"] <= end_date)]
 df = df[["ticker", "date", "Close"]].rename(columns={"Close": "price"}).reset_index(drop=True)
@@ -72,7 +72,6 @@ def fitness_func(ga_instance, solution, solution_idx):
     ris = portfolio_risk(portfolio)
     expected_return_points = (portfolio_LSTM_return(portfolio_tickers) - 1) * 2000
     fitness = (ret / ris) - expected_return_points
-    # fitness = ret / ris
     return fitness
 
 
@@ -95,7 +94,7 @@ def visualize(df, solution) -> None:
 ## Define Genetic Algorithm
 
 fitness_function = fitness_func
-num_generations = 30
+num_generations = 100
 num_genes = 10
 
 sol_per_pop = 90
@@ -137,22 +136,9 @@ for i, j in zip(ga_instance.best_solutions, ga_instance.best_solutions_fitness):
     print([(tickers_map_reverse[k], k) for k in sorted(i)], j)
 
 ## Plot training, best results
-ga_instance.plot_fitness(save_dir="docs/learning_result.png")
+ga_instance.plot_fitness(save_dir="docs/plots/learning_result.png")
 [solution, _, __] = ga_instance.best_solution()
 visualize(df, solution)
-
-# 10 spółek o największym zysku, nie uwzględniając ryzyka
-firsts = df.groupby("ticker_index", as_index=False).first()
-firsts = firsts.rename({"adj_price": "first_price"}, axis=1)[["ticker_index", "first_price"]]
-lasts = df.groupby("ticker_index", as_index=False).last()
-lasts = lasts.rename({"adj_price": "last_price"}, axis=1)[["ticker_index", "last_price"]]
-
-df_ = firsts.merge(lasts, on="ticker_index", how="left")
-df_["return"] = df_["last_price"] / df_["first_price"]
-df_ = df_.sort_values("return", ascending=False)
-best_return = df_.head(10)["ticker_index"].unique()
-
-visualize(df, best_return)
 
 ## S&P 500 benchmark
 
