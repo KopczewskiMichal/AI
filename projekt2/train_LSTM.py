@@ -6,11 +6,12 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import LSTM
+from tensorflow.keras.callbacks import EarlyStopping
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
-from tensorflow.keras.callbacks import EarlyStopping
 
-LOOK_BACK = 3
+LOOK_BACK = 10
+EPOCHS = 25
 
 # convert an array of values into a dataset matrix
 def create_dataset(dataset, time_step=1):
@@ -26,9 +27,10 @@ tf.random.set_seed(7)
 
 # load the dataset
 dataframe = read_csv('resources/SP500_history.csv', engine='python')
+print(dataframe.columns)
 
 # Konwersja kolumny 'Datetime' na typ daty
-dataframe['Datetime'] = pd.to_datetime(dataframe['Datetime'])
+dataframe['Datetime'] = pd.to_datetime(dataframe['Date'])
 
 # Wyodrębnienie dat i zamknięć
 dates = dataframe['Datetime'].values
@@ -68,8 +70,8 @@ model.add(LSTM(50, return_sequences=True))
 model.add(LSTM(50))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer='adam')
-model.fit(trainX, trainY, epochs=50, batch_size=1, verbose=1, callbacks=[earlyStopCallback])
-model.save("LSTMmodel3.keras")
+model.fit(trainX, trainY, epochs=EPOCHS, batch_size=1, verbose=1, callbacks=[earlyStopCallback])
+model.save(f"LSTMmodel{LOOK_BACK}.keras")
 
 # Make predictions
 trainPredict = model.predict(trainX)
@@ -102,4 +104,4 @@ plt.plot(scaler.inverse_transform(close_values_scaled), label='Original Data')
 plt.plot(trainPredictPlot, label='Train Predict')
 plt.plot(testPredictPlot, label='Test Predict')
 plt.legend()
-plt.savefig("docs/plots/lstm_plot3.png")
+plt.savefig(f"docs/plots/lstm_plot{LOOK_BACK}.png")

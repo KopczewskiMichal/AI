@@ -1,5 +1,4 @@
 import pandas as pd
-import certifi
 from datetime import timedelta, datetime
 import ssl
 
@@ -25,9 +24,9 @@ def download_tickers_history(tickers: list[str]) -> None:
 		company_data = yf.download(tickers=company_ticker, start = START_DATE, end = END_DATE, interval = "1d")
 		company_data['date'] = company_data.index
 		company_data['ticker'] = company_ticker
-		company_data['Adj Close'] = company_data['Adj Close']
+		company_data['Adj Close'] = company_data['Close']
 		data.append(company_data)
-	
+
 	raw_data = pd.concat(data)
 	raw_data = raw_data[['Open', 'High', 'Low', 'Close', 'Volume', 'date', 'ticker', 'Adj Close']]
 	raw_data.to_csv("resources/new_data.csv")
@@ -39,6 +38,6 @@ def download_SP500():
   
   
 if __name__ == "__main__":
-  download_tickers_history(get_sp500_companies())
-  # download_SP500()
+  # download_tickers_history(get_sp500_companies())
+  download_SP500()
   
