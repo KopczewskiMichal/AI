@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from pandas import read_csv
+import matplotlib.dates as mdates
+import pandas as pd
 from tensorflow.keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
 
@@ -8,7 +9,7 @@ LOOK_BACK = 3
 
 # Load the saved model
 model = load_model(f"LSTMmodel{LOOK_BACK}.keras")
-TICKER = 'AAPL'
+TICKER = 'CSCO'
 
 # Function to create dataset matrix
 def create_dataset(dataset, time_step=1):
@@ -20,36 +21,54 @@ def create_dataset(dataset, time_step=1):
     return np.array(dataX), np.array(dataY)
 
 # Load new data for prediction
-new_datafile = 'resources/new_data.csv'  # Replace with your new CSV file path
-new_dataframe = read_csv(new_datafile, engine='python')
+new_datafile = 'resources/stock_data.csv'
+new_dataframe = pd.read_csv(new_datafile, engine='python')
 
-# Filter for specific ticker
-new_dataframe = new_dataframe.loc[new_dataframe['ticker'] == TICKER]
 
-# Extract close values
+new_dataframe = new_dataframe[["Date", TICKER]]
+new_dataframe = new_dataframe.rename(columns={TICKER: "Close"})
+
+
+print(new_dataframe.head())
+
 new_close_values = new_dataframe['Close'].values
 
-# Scale close values
 scaler = MinMaxScaler(feature_range=(0, 1))
-new_close_values = new_close_values.reshape(-1, 1)  # Reshape to 2D
+new_close_values = new_close_values.reshape(-1, 1)
 new_close_values_scaled = scaler.fit_transform(new_close_values)
 
-newX, newY = create_dataset(new_close_values_scaled, LOOK_BACK)
+def create_dataset(dataset, look_back=1):
+    dataX, dataY = [], []
+    for i in range(len(dataset) - look_back):
+        a = dataset[i:(i + look_back), 0]
+        dataX.append(a)
+        dataY.append(dataset[i + look_back, 0])
+    return np.array(dataX), np.array(dataY)
 
+newX, newY = create_dataset(new_close_values_scaled, LOOK_BACK)
 newX = np.reshape(newX, (newX.shape[0], 1, newX.shape[1]))
 
 newPredict = model.predict(newX)
 
-# Invert predictions
 newPredict = scaler.inverse_transform(newPredict)
 newY = scaler.inverse_transform(newY.reshape(-1, 1))
 
-print(type(newY))
-print(newY)
 
-# Plot predictions
-plt.plot(scaler.inverse_transform(new_close_values_scaled), label='Original Data')
-plt.plot(range(LOOK_BACK, LOOK_BACK + len(newPredict)), newPredict, label='Predicted Data')
+# Tworzymy wykres
+plt.figure(figsize=(10, 6))
+
+
+# Tworzymy wykres
+plt.figure(figsize=(10, 6))
+plt.plot(pd.to_datetime(new_dataframe['Date']),
+         scaler.inverse_transform(new_close_values_scaled),
+         label='Original Data')
+plt.plot(pd.to_datetime(new_dataframe['Date'][LOOK_BACK:LOOK_BACK + len(newPredict)]),
+         newPredict,
+         label='Predicted Data')
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator())
+plt.gcf().autofmt_xdate()
 plt.legend()
-plt.savefig(f"docs/plots/AAPL_predicted_prices{LOOK_BACK}.png")
+plt.savefig(f"docs/plots/{TICKER}_predicted_prices{LOOK_BACK}.png")
 plt.show()
