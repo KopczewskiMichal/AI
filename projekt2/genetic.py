@@ -7,31 +7,49 @@ from preprocessing import predictLSTM
 mpl.rcParams['figure.facecolor'] = 'white'
 mpl.rcParams["figure.figsize"] = (10, 7)
 
-data = pd.read_csv("resources/new_data.csv")
+data = pd.read_csv("resources/stock_data.csv")
 df = data.copy()
+
+# Set date range (LAST 30 DAYS)
+end_date = datetime.today()  # Most recent date
+start_date = end_date - timedelta(days=30)  # 30 days before
+
+# Convert 'Date' column to datetime (if not already)
+df["Date"] = pd.to_datetime(df["Date"])
+
+# Filter for dates BETWEEN start_date AND end_date
+df = df[(df["Date"] >= start_date) & (df["Date"] <= end_date)]
+
+# If DataFrame is empty, check your date range
+if df.empty:
+    raise ValueError("No data in the selected date range. Check if 'start_date' and 'end_date' are correct.")
+
+# Reshape to long format
+df_long = df.melt(id_vars=["Date"], var_name="ticker", value_name="price")
+df_long = df_long.rename(columns={"Date": "date"})
+
+# Map tickers to indices
+tickers = df_long["ticker"].unique()
+tickers_map = {ticker: idx for idx, ticker in enumerate(tickers)}
+tickers_map_reverse = {idx: ticker for idx, ticker in tickers_map.items()}
+
+# Normalize prices
+df_long["ticker_index"] = df_long["ticker"].map(tickers_map)
+first_prices = df_long.groupby("ticker")["price"].transform("first")
+df_long["adj_price"] = df_long["price"] / first_prices
+
+df_final = df_long[["ticker", "ticker_index", "date", "adj_price"]]
+
+
+# Sprawdzenie czy ilość danych jest równa (spółka nie dołączyła/odeszła z indeksu w ostatnim czasie)
+print(df_final.groupby("ticker").count().sort_values("date"))
+
+# df = df[df["ticker"] != "OGN"]
+
 tomorrow_returns = predictLSTM(df)
-
 print(tomorrow_returns)
-start_date = datetime.today()
-end_date = start_date - timedelta(days=30)
-# df = df[(df["date"] >= start_date) & (df["date"] <= end_date)]
-df = df[["ticker", "date", "Close"]].rename(columns={"Close": "price"}).reset_index(drop=True)
-tickers = df["ticker"].unique()
-tickers_map = {i: j for i, j in zip(tickers, range(len(tickers)))}
-tickers_map_reverse = {j: i for i, j in zip(tickers, range(len(tickers)))}
-
-df["ticker_index"] = df["ticker"].map(tickers_map)
-firsts = (df.groupby('ticker').transform('first'))
-df["adj_price"] = df["price"] / firsts["price"]
-df = df[["ticker", "ticker_index", "date", "adj_price"]]
-
-## Drop OGN as it joined SP500 midway
-df = df[df["ticker"] != "OGN"]
-
-df.groupby("ticker").count().sort_values("date")
 
 
-## Define fitness function and utils
 
 def get_portfolio_tickers(df, tickers):
     portfolio = df[df['ticker_index'].isin(tickers)]
@@ -91,55 +109,29 @@ def visualize(df, solution) -> None:
     print(f"Risk adjusted return = {round(solution_fitness_scalar, 1)}%")
 
 
-## Define Genetic Algorithm
-
-fitness_function = fitness_func
-num_generations = 100
-num_genes = 10
-
-sol_per_pop = 90
-num_parents_mating = 50
-
-init_range_low = 100
-init_range_high = 497
-gene_type = int
-
-parent_selection_type = "sss"
-keep_parents = 30
-
-crossover_type = "single_point"
-
-mutation_type = "random"
-mutation_percent_genes = 30
-mutation_by_replacement = False
-
-## Initiate and run genetic algorithm
-
-ga_instance = pygad.GA(num_generations=num_generations,
-                       num_parents_mating=num_parents_mating,
-                       fitness_func=fitness_function,
-                       sol_per_pop=sol_per_pop,
-                       num_genes=num_genes,
-                       init_range_low=init_range_low,
-                       init_range_high=init_range_high,
-                       parent_selection_type=parent_selection_type,
-                       keep_parents=keep_parents,
-                       crossover_type=crossover_type,
-                       mutation_type=mutation_type,
-                       mutation_percent_genes=mutation_percent_genes,
-                       gene_type=gene_type,
-                       #    allow_duplicate_genes=False,
+ga_instance = pygad.GA(num_generations=100,
+                       num_parents_mating=50,
+                       fitness_func=fitness_func,
+                       sol_per_pop=90,
+                       num_genes=10,
+                       init_range_low=100,
+                       init_range_high=497,
+                       parent_selection_type="sss",
+                       keep_parents=30,
+                       crossover_type="single_point",
+                       mutation_type="random",
+                       mutation_percent_genes=30,
+                       gene_type=float,
+                       allow_duplicate_genes=False,
                        random_seed=2,
-                       mutation_by_replacement=mutation_by_replacement)
+                       mutation_by_replacement=False)
 ga_instance.run()
 for i, j in zip(ga_instance.best_solutions, ga_instance.best_solutions_fitness):
     print([(tickers_map_reverse[k], k) for k in sorted(i)], j)
 
-## Plot training, best results
-ga_instance.plot_fitness(save_dir="docs/plots/learning_result.png")
+ga_instance.plot_fitness(save_dir="docs/plots/genetic_learning_result.png")
 [solution, _, __] = ga_instance.best_solution()
 visualize(df, solution)
 
-## S&P 500 benchmark
 
 visualize(df, df["ticker_index"].unique())
