@@ -23,7 +23,7 @@ Nauka i test sieci na indeksie S&P 500.
 
 Test powyższego LSTM na cenach akcji spółki Cisco Systems, Inc.
 
-![CSCO_predicted_prices1.png](./docs/plots/CSCO_predicted_prices3.png)
+![CSCO_predicted_prices3.png](./docs/plots/CSCO_predicted_prices3.png)
 
 [//]: # (#### LOOK_BACK = 3)
 
