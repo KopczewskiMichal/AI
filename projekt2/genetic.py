@@ -63,12 +63,12 @@ def portfolio_generate(df, tickers):
     portfolio = portfolio.sort_values("date")
     return portfolio, get_portfolio_tickers(df, tickers)
 
-def portfolio_history_return(portfolio):
+def portfolio_history_return(portfolio): # Zwrot z ostatnich 30 dni
     first_price = portfolio["adj_price"].iloc[0]
     last_price = portfolio["adj_price"].iloc[-1]
     return last_price / first_price - 1
 
-def portfolio_risk(portfolio):
+def portfolio_risk(portfolio): # odchylenie standardowe
     portfolio["daily_change"] = portfolio["adj_price"].diff(1)
     portfolio["daily_change"] = portfolio["daily_change"] / portfolio["adj_price"]
     return portfolio["daily_change"].std()
@@ -79,12 +79,11 @@ def fitness_func(ga_instance, solution, solution_idx):
     ris = portfolio_risk(portfolio)
     expected_return_points = (portfolio_LSTM_return(portfolio_tickers) - 1) * 500
     fitness = (ret / ris) + expected_return_points
-
     return fitness
 
-def visualize(df_final, solution) -> None:  # Changed parameter name
+def visualize(df_final, solution) -> None:
     solution_fitness = fitness_func(None, solution, None)
-    portfolio, _ = portfolio_generate(df_final, solution)  # Changed df to df_final
+    portfolio, _ = portfolio_generate(df_final, solution)
     portfolio["adj_price"] = (portfolio["adj_price"] / portfolio["adj_price"].iloc[0]) * 100
     ax = portfolio.plot.line(x="date", y="adj_price")
     ax.set_ylim(90, 190)
@@ -97,7 +96,7 @@ def visualize(df_final, solution) -> None:  # Changed parameter name
     # print(f"Risk adjusted return = {round(solution_fitness_scalar, 1)}%")
 
 
-ga_instance = pygad.GA(num_generations=100,
+ga_instance = pygad.GA(num_generations=200,
                        num_parents_mating=50,
                        fitness_func=fitness_func,
                        sol_per_pop=90,

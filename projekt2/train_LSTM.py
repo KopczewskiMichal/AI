@@ -35,7 +35,7 @@ dates = dataframe['Datetime'].values
 close_values = dataframe['Close'].values
 
 scaler = MinMaxScaler(feature_range=(0, 1))
-close_values = close_values.reshape(-1, 1)  # Reshape do 2D
+close_values = close_values.reshape(-1, 1)
 close_values_scaled = scaler.fit_transform(close_values)
 
 dates_num = np.array([pd.Timestamp(d).timestamp() for d in dates]).reshape(-1, 1)

@@ -1,7 +1,7 @@
 # Optymalizacja portfela akcji w celu maksymalizacji zysków w skali 1 dniowej.
 
 
-## Wstęp
+## Cel projektu
 
 Celem projektu jest wybór 10 spółek będących częścią indeksu S&P 500 których zakup przyniesie największy zysk w 
 skali jednego dnia. Przyjęto założenie wykonywania transakcji po cenach zamknięcia oraz inwestycje równej kwoty w 
@@ -15,33 +15,37 @@ Pozostałe 20% stanowiło zbiór testowy. Takie podejście pozwala wytrenować s
 poszczególnych spółek, bez konieczności uczenia osobnego programu dla każdej firmy.
 
 ### LOOK_BACK
-
-Przetestowano warianty sieci korzystające z 1 lub 3 poprzednich dni do predykcji cen zamknięcia w dniu kolejnym
-
-#### LOOK_BACK = 1
+Przetestowano sieci LSTM o różnym look_back i najlepiej sprawdza się look_back=3
 
 Nauka i test sieci na indeksie S&P 500.
 
-![lstm_plot1.png](./docs/plots/lstm_plot1.png)
+![lstm_plot1.png](./docs/plots/lstm_plot3.png)
 
-Test powyższego LSTM na cenach akcji spółki Apple Inc.
+Test powyższego LSTM na cenach akcji spółki Cisco Systems, Inc.
 
-![AAPL_predicted_prices1.png](./docs/plots/AAPL_predicted_prices1.png)
+![CSCO_predicted_prices1.png](./docs/plots/CSCO_predicted_prices3.png)
 
-#### LOOK_BACK = 3
+[//]: # (#### LOOK_BACK = 3)
 
-Nauka i test sieci na indeksie S&P 500.
+[//]: # ()
+[//]: # (Nauka i test sieci na indeksie S&P 500.)
 
-![lstm_plot1.png](./docs/plots/lstm_plot3_16.png)
+[//]: # ()
+[//]: # (![lstm_plot1.png]&#40;./docs/plots/lstm_plot3_16.png&#41;)
 
-Test powyższego LSTM na cenach akcji spółki Apple Inc.
+[//]: # ()
+[//]: # (Test powyższego LSTM na cenach akcji spółki Apple Inc.)
 
-![AAPL_predicted_prices1.png](./docs/plots/AAPL_predicted_prices3.png)
+[//]: # ()
+[//]: # (![AAPL_predicted_prices1.png]&#40;./docs/plots/AAPL_predicted_prices3.png&#41;)
 
-Z eksperymentu wynika że biorąc pod uwagę 3 ostatnie notowania predykcja jest znacznie dokładniejsza. Z tego powodu 
-w dalszej części sprawozdania rozważamy LOOK_BACK = 3
+[//]: # ()
+[//]: # (Z eksperymentu wynika że biorąc pod uwagę 3 ostatnie notowania predykcja jest znacznie dokładniejsza. Z tego powodu )
 
-Analizowany przykład AAPL obrazuje fakt że AI nie radzi sobie z nagłymi skokami wartości.
+[//]: # (w dalszej części sprawozdania rozważamy LOOK_BACK = 3)
+
+[//]: # ()
+[//]: # (Analizowany przykład AAPL obrazuje fakt że AI nie radzi sobie z nagłymi skokami wartości.)
 
 ## Algorytm genetyczny
 
@@ -55,11 +59,11 @@ prognozują wzrost w dniu kolejnym.
 
 ```python
 def fitness_func(ga_instance, solution, solution_idx):
-    portfolio, portfolio_tickers = portfolio_generate(df, solution)
+    portfolio, portfolio_tickers = portfolio_generate(df_final, solution)
     ret = portfolio_history_return(portfolio)
     ris = portfolio_risk(portfolio)
-    expected_return_points = (portfolio_LSTM_return(portfolio_tickers) - 1) * 2000
-    fitness = (ret / ris) - expected_return_points
+    expected_return_points = (portfolio_LSTM_return(portfolio_tickers) - 1) * 500
+    fitness = (ret / ris) + expected_return_points
     return fitness
 ```
 
@@ -68,6 +72,7 @@ def fitness_func(ga_instance, solution, solution_idx):
 ![learning_result.png](./docs/plots/learning_result.png)
 
 ## Test programu
+### Test 1
 
 Test został przeprowadzony w dniu 13.06.24 po zamknięciu NYSE oraz NASDAQ na których notowane są spółki wchodzące w 
 skład S&P 500. 
@@ -79,9 +84,18 @@ PGR, FIS, VST, NVDA, NRG, LDOS, NVDA, LLY, QCOM, NRG.
 
 W takim przypadku zysk wyniósł 5.77$.
 
-Gdyby ten sam 1000$ zainwestować po równo we wszystkie spółki w tym indeksie strata wynosiłaby 2.8$.
+Gdyby ten sam 1000\$ zainwestować po równo we wszystkie spółki w tym indeksie strata wynosiłaby 2.8$.
 
+### Test 2
 
+Test został przeprowadzony w dniu 14.04.25 po zamknięciu giełdy.
+
+Spółki wskazane przez program:
+TJX, NEM, MKTX, HUM, MKTX, DRI, COR, UNH, LW, HUM
+
+Strata na wskazanych spółkach: 0.198%
+
+Średnia strata indeksu: 0.369%
 
 ### Źrodła
 
