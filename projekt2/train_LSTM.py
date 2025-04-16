@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from pandas import read_csv
 import pandas as pd
 import tensorflow as tf
@@ -54,7 +55,6 @@ testX = np.reshape(testX, (testX.shape[0], 1, testX.shape[1]))
 
 earlyStopCallback = EarlyStopping(monitor='loss', patience=3, restore_best_weights=True)
 
-# Create and fit the LSTM network
 model = Sequential()
 model.add(LSTM(50, return_sequences=True, input_shape=(trainX.shape[1], LOOK_BACK)))
 # model.add(Dropout(0.2))
@@ -65,7 +65,7 @@ model.add(LSTM(50))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer='adam')
 model.fit(trainX, trainY, epochs=EPOCHS, batch_size=8, verbose=1, callbacks=[earlyStopCallback])
-model.save(f"LSTMmodel{LOOK_BACK}.keras")
+# model.save(f"LSTMmodel{LOOK_BACK}.keras")
 
 trainPredict = model.predict(trainX)
 testPredict = model.predict(testX)
@@ -88,8 +88,16 @@ testPredictPlot = np.empty_like(close_values_scaled)
 testPredictPlot[:, :] = np.nan
 testPredictPlot[len(trainPredict) + (LOOK_BACK * 2) + 1:len(close_values_scaled) - 1, :] = testPredict
 
-plt.plot(scaler.inverse_transform(close_values_scaled), label='Original Data')
-plt.plot(trainPredictPlot, label='Train Predict')
-plt.plot(testPredictPlot, label='Test Predict')
+dataframe.set_index('Datetime', inplace=True)
+print(dataframe.head())
+
+plt.plot(dataframe.index, scaler.inverse_transform(close_values_scaled), label='Original Data')
+plt.plot(dataframe.index, trainPredictPlot, label='Train Predict')
+plt.plot(dataframe.index, testPredictPlot, label='Test Predict')
+
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator())
+plt.gcf().autofmt_xdate()
 plt.legend()
+plt.tight_layout()
 plt.savefig(f"docs/plots/lstm_plot{LOOK_BACK}.png")

@@ -1,6 +1,5 @@
 # Optymalizacja portfela akcji w celu maksymalizacji zysków w skali 1 dniowej.
 
-## Kopczewski Michał
 
 ## Wstęp
 
@@ -33,7 +32,7 @@ Test powyższego LSTM na cenach akcji spółki Apple Inc.
 
 Nauka i test sieci na indeksie S&P 500.
 
-![lstm_plot1.png](./docs/plots/lstm_plot3.png)
+![lstm_plot1.png](./docs/plots/lstm_plot3_16.png)
 
 Test powyższego LSTM na cenach akcji spółki Apple Inc.
 

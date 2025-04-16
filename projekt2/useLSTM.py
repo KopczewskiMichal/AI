@@ -7,7 +7,6 @@ from sklearn.preprocessing import MinMaxScaler
 
 LOOK_BACK = 3
 
-# Load the saved model
 model = load_model(f"LSTMmodel{LOOK_BACK}.keras")
 TICKER = 'CSCO'
 
@@ -20,7 +19,6 @@ def create_dataset(dataset, time_step=1):
         dataY.append(dataset[i + time_step, 0])
     return np.array(dataX), np.array(dataY)
 
-# Load new data for prediction
 new_datafile = 'resources/stock_data.csv'
 new_dataframe = pd.read_csv(new_datafile, engine='python')
 
@@ -54,11 +52,6 @@ newPredict = scaler.inverse_transform(newPredict)
 newY = scaler.inverse_transform(newY.reshape(-1, 1))
 
 
-# Tworzymy wykres
-plt.figure(figsize=(10, 6))
-
-
-# Tworzymy wykres
 plt.figure(figsize=(10, 6))
 plt.plot(pd.to_datetime(new_dataframe['Date']),
          scaler.inverse_transform(new_close_values_scaled),

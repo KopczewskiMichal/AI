@@ -10,7 +10,7 @@ mpl.rcParams["figure.figsize"] = (10, 7)
 data = pd.read_csv("resources/stock_data.csv")
 df = data.copy()
 
-end_date = datetime.today()
+end_date = datetime.today() - timedelta(days=1)
 start_date = end_date - timedelta(days=30)
 
 df["Date"] = pd.to_datetime(df["Date"])
@@ -39,8 +39,8 @@ print(df_final.groupby("ticker").count().sort_values("date"))
 
 # df = df[df["ticker"] != "OGN"]
 
-#!tomorrow_returns = predictLSTM(df)
-#print(tomorrow_returns)
+tomorrow_returns = predictLSTM(df)
+print(tomorrow_returns)
 
 
 
@@ -63,11 +63,6 @@ def portfolio_generate(df, tickers):
     portfolio = portfolio.sort_values("date")
     return portfolio, get_portfolio_tickers(df, tickers)
 
-def get_portfolio_tickers(df_final, tickers):
-    portfolio = df_final[df_final['ticker_index'].isin(tickers)]  # Changed df to df_final
-    unique_tickers = portfolio['ticker'].unique()
-    return unique_tickers
-
 def portfolio_history_return(portfolio):
     first_price = portfolio["adj_price"].iloc[0]
     last_price = portfolio["adj_price"].iloc[-1]
@@ -79,12 +74,11 @@ def portfolio_risk(portfolio):
     return portfolio["daily_change"].std()
 
 def fitness_func(ga_instance, solution, solution_idx):
-    portfolio, portfolio_tickers = portfolio_generate(df_final, solution)  # Changed df to df_final
+    portfolio, portfolio_tickers = portfolio_generate(df_final, solution)
     ret = portfolio_history_return(portfolio)
     ris = portfolio_risk(portfolio)
-    #! expected_return_points = (portfolio_LSTM_return(portfolio_tickers) - 1) * 2000
-    #! fitness = (ret / ris) - expected_return_points
-    fitness = (ret / ris)
+    expected_return_points = (portfolio_LSTM_return(portfolio_tickers) - 1) * 500
+    fitness = (ret / ris) + expected_return_points
 
     return fitness
 
@@ -96,13 +90,11 @@ def visualize(df_final, solution) -> None:  # Changed parameter name
     ax.set_ylim(90, 190)
     ret = round(portfolio_history_return(portfolio) * 100, 1)
     ris = round(portfolio_risk(portfolio) * 100, 1)
-    print("Tickers map:", tickers_map)
-    print("Tickers map reversed", tickers_map_reverse)
     print(f"Parameters of the best solution : {[tickers_map_reverse[i] for i in solution]}")
     print(f"Return: {ret}%")
-    print(f"Risk: {ris}%")
-    solution_fitness_scalar = solution_fitness.item()
-    print(f"Risk adjusted return = {round(solution_fitness_scalar, 1)}%")
+    # print(f"Risk: {ris}%")
+    # solution_fitness_scalar = solution_fitness.item()
+    # print(f"Risk adjusted return = {round(solution_fitness_scalar, 1)}%")
 
 
 ga_instance = pygad.GA(num_generations=100,

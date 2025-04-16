@@ -10,7 +10,7 @@ stock_symbol = '^GSPC'
 
 df =  pd.read_csv("resources/SP500_history.csv")
 
-data = df.filter(['Close']) # Analizujemy wartości indeksu na zamknięciu
+data = df.filter(['Close'])
 dataset = data.values
 training_data_len = int(np.ceil(0.8 * len(dataset)))
 

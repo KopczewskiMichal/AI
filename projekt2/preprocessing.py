@@ -35,7 +35,6 @@ def predictLSTM(df: pandas.DataFrame) -> dict:
         tomorrow_prediction = newPredict[0][0]
         result[act_ticker] = tomorrow_prediction / close_values[-1]
 
-    print(result)
     return result
 
 def create_dataset(dataset, time_step=1):

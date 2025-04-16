@@ -5,7 +5,7 @@ import yfinance as yf
 ssl._create_default_https_context = ssl._create_unverified_context
 
 END_DATE = datetime.today()
-START_DATE = END_DATE - timedelta(days=365)
+START_DATE = END_DATE - timedelta(days=365*3)
 
 def get_sp500_companies() -> list[str]:
     url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
@@ -14,10 +14,11 @@ def get_sp500_companies() -> list[str]:
     return sp500_table['Symbol'].tolist()
 
 def download_tickers_history(tickers: list[str]) -> None:
-    # TODO Pobierać tylko to co potrzeba
-    company_data = yf.download(tickers=tickers, start = START_DATE, end = END_DATE, interval = "1d")
+    company_data = yf.download(tickers=tickers, start = START_DATE, end = END_DATE, interval = "1d")["Close"]
+    company_data = company_data.dropna(axis=1, how='all')
     print(company_data.head())
     company_data.to_csv("resources/stock_data.csv")
+
 
 def download_sp500():
   df = yf.download (tickers="^GSPC", start=START_DATE,
